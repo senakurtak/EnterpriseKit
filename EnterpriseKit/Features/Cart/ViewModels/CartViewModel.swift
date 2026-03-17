@@ -8,13 +8,19 @@
 import Foundation
 
 @MainActor
-final class CartViewModel: ObservableObject {
+final class CartViewModel {
     
-    // MARK: - Published State
+    // MARK: - State
     
-    @Published private(set) var items: [CartItem] = []
-    @Published var isLoading = false
-    @Published var errorMessage: String?
+    private(set) var items: [CartItem] = []
+    private(set) var isLoading: Bool = false
+    private(set) var errorMessage: String?
+    
+    // MARK: - Callbacks
+    
+    var onCartUpdated: (() -> Void)?
+    var onLoadingChanged: ((Bool) -> Void)?
+    var onError: ((String) -> Void)?
     
     // MARK: - Dependencies
     
@@ -24,7 +30,6 @@ final class CartViewModel: ObservableObject {
         self.service = service
     }
     
-   
     // MARK: - Public Methods
     
     func loadCart() {
@@ -35,53 +40,83 @@ final class CartViewModel: ObservableObject {
     
     func addToCart(productId: String) {
         Task {
+            isLoading = true
+            onLoadingChanged?(true)
+            
+            defer {
+                isLoading = false
+                onLoadingChanged?(false)
+            }
+            
             do {
                 if let existingItem = items.first(where: { $0.productId == productId }) {
-                    // Ürün zaten varsa quantity artır
                     try await service.updateQuantity(
                         cartId: existingItem.id,
                         quantity: existingItem.quantity + 1
                     )
                 } else {
-                    // Yoksa yeni ekle
                     try await service.addProduct(
                         productId: productId,
                         quantity: 1
                     )
                 }
                 
-                await fetchCart()
+                items = try await service.fetchCart()
+                onCartUpdated?()
                 
             } catch {
                 errorMessage = error.localizedDescription
+                onError?(error.localizedDescription)
             }
         }
     }
     
-    func removeItem(_ item: CartItem) {
+    func removeItem(at index: Int) {
         Task {
+            guard index < items.count else { return }
+            
+            isLoading = true
+            onLoadingChanged?(true)
+            
+            defer {
+                isLoading = false
+                onLoadingChanged?(false)
+            }
+            
             do {
+                let item = items[index]
                 try await service.removeCartItem(cartId: item.id)
-                await fetchCart()
+                
+                items = try await service.fetchCart()
+                onCartUpdated?()
+                
             } catch {
                 errorMessage = error.localizedDescription
+                onError?(error.localizedDescription)
             }
         }
     }
 }
 
+// MARK: - Private
+
 private extension CartViewModel {
     
     func fetchCart() async {
         isLoading = true
-        errorMessage = nil
+        onLoadingChanged?(true)
+        
+        defer {
+            isLoading = false
+            onLoadingChanged?(false)
+        }
         
         do {
             items = try await service.fetchCart()
+            onCartUpdated?()
         } catch {
             errorMessage = error.localizedDescription
+            onError?(error.localizedDescription)
         }
-        
-        isLoading = false
     }
 }

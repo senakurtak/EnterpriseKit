@@ -16,11 +16,25 @@ final class ProductDetailViewModel {
     
     var onProductLoaded: (() -> Void)?
     var onError: ((String) -> Void)?
+    var onAddToCartSuccess: (() -> Void)?
+    var onAddToCartError: ((String) -> Void)?
     
     init(productId: String,
          service: ProductServiceProtocol = ProductService()) {
         self.productId = productId
         self.service = service
+    }
+
+    func addToCart(quantity: Int = 1) {
+        Task {
+            do {
+                try await CartService().addProduct(productId: productId,
+                                                    quantity: quantity)
+                onAddToCartSuccess?()
+            } catch {
+                onAddToCartError?(error.localizedDescription)
+            }
+        }
     }
     
     func loadProduct() {

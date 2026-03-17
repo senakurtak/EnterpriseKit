@@ -117,6 +117,10 @@ private extension ProductDetailViewController {
         addToCartButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
         
         contentStack.addArrangedSubview(addToCartButton)
+        
+        addToCartButton.addTarget(self,
+                                  action: #selector(addToCartTapped),
+                                  for: .touchUpInside)
     }
     
     func setupLoading() {
@@ -146,6 +150,26 @@ private extension ProductDetailViewController {
             DispatchQueue.main.async {
                 self?.activityIndicator.stopAnimating()
                 self?.showError(message)
+            }
+        }
+        
+        viewModel.onAddToCartSuccess = { [weak self] in
+            DispatchQueue.main.async {
+                let alert = UIAlertController(title: "Success",
+                                              message: "Added to cart",
+                                              preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "OK", style: .default))
+                self?.present(alert, animated: true)
+            }
+        }
+
+        viewModel.onAddToCartError = { [weak self] message in
+            DispatchQueue.main.async {
+                let alert = UIAlertController(title: "Error",
+                                              message: message,
+                                              preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "OK", style: .default))
+                self?.present(alert, animated: true)
             }
         }
     }
@@ -189,5 +213,9 @@ private extension ProductDetailViewController {
                 print("Image loading failed")
             }
         }
+    }
+    
+    @objc private func addToCartTapped() {
+        viewModel.addToCart()
     }
 }
