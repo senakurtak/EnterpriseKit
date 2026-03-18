@@ -56,6 +56,7 @@ private extension CustomCartCell {
         priceLabel.font = .systemFont(ofSize: 14, weight: .bold)
         priceLabel.textColor = .systemGreen
         
+        
         quantityLabel.translatesAutoresizingMaskIntoConstraints = false
         quantityLabel.font = .systemFont(ofSize: 14)
         quantityLabel.textAlignment = .center
@@ -111,8 +112,8 @@ private extension CustomCartCell {
 extension CustomCartCell {
     
     func configure(with item: CartItem) {
-        titleLabel.text = "Product \(item.productId)"
-        priceLabel.text = "\(item.quantity * 1000) TRY"
+        titleLabel.text = "\(item.name)"
+        priceLabel.text = "\(item.price) \(item.currency)"
         quantityLabel.text = "\(item.quantity)"
         
         // todo: change mock image

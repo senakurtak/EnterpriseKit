@@ -158,11 +158,12 @@ private extension CartViewController {
 
 private extension CartViewController {
     
-    func calculateTotal() -> Int {
+    func calculateTotal() -> Double {
         viewModel.items.reduce(0) { result, item in
-            result + (item.quantity * 1000)
+            result + (item.price * Double(item.quantity))
         }
     }
+    
     private func updateTabBarBadge() {
         guard let tabBarController = tabBarController else { return }
         

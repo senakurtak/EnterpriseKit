@@ -59,10 +59,10 @@ final class CartViewModel {
                         quantity: existingItem.quantity + 1
                     )
                 } else {
-                    try await service.addProduct(
-                        productId: productId,
-                        quantity: 1
-                    )
+//                    try await service.addProduct(
+//                        productId: productId,
+//                        quantity: 1
+//                    )
                 }
                 
                 items = try await service.fetchCart()

@@ -9,7 +9,7 @@ import Foundation
 
 protocol CartServiceProtocol {
     func fetchCart() async throws -> [CartItem]
-    func addProduct(productId: String, quantity: Int) async throws
+    func addProduct(request: AddToCartRequest) async throws
     func updateQuantity(cartId: String, quantity: Int) async throws
     func removeCartItem(cartId: String) async throws
 }
@@ -20,14 +20,9 @@ final class CartService: CartServiceProtocol {
         try await NetworkService.shared.request(.getCart)
     }
     
-    func addProduct(productId: String, quantity: Int) async throws {
+    func addProduct(request: AddToCartRequest) async throws {
         
-        let requestBody = AddToCartRequest(
-            productId: productId,
-            quantity: quantity
-        )
-        
-        let body = try JSONEncoder().encode(requestBody)
+        let body = try JSONEncoder().encode(request)
         
         let _: CartItem = try await NetworkService.shared.request(
             .addToCart,
@@ -40,7 +35,7 @@ final class CartService: CartServiceProtocol {
         let body = try JSONEncoder().encode(
             ["quantity": quantity]
         )
-        
+
         let _: CartItem = try await NetworkService.shared.request(
             .updateCart(id: cartId),
             method: "PUT",

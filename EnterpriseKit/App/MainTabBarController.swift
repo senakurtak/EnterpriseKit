@@ -7,7 +7,7 @@
 
 import UIKit
 
-extension Notification.Name {
+extension Notification.Name { // todo: change place
     static let cartUpdated = Notification.Name("cartUpdated")
 }
 

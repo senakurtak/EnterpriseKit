@@ -26,13 +26,10 @@ enum APIEndpoint {
             return URL(string: "\(Self.baseURL)/products/?productId=\(id)")
         case .getCart:
             return URL(string: "\(Self.baseURL)/cart")
-
         case .addToCart:
             return URL(string: "\(Self.baseURL)/cart")
-
         case .updateCart(let id):
             return URL(string: "\(Self.baseURL)/cart/\(id)")
-
         case .deleteCart(let id):
             return URL(string: "\(Self.baseURL)/cart/\(id)")
         }
