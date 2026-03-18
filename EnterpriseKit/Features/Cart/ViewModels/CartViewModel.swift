@@ -16,6 +16,10 @@ final class CartViewModel {
     private(set) var isLoading: Bool = false
     private(set) var errorMessage: String?
     
+    var totalItemCount: Int {
+        items.reduce(0) { $0 + $1.quantity }
+    }
+    
     // MARK: - Callbacks
     
     var onCartUpdated: (() -> Void)?

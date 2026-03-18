@@ -143,6 +143,16 @@ private extension CartViewController {
             alert.addAction(UIAlertAction(title: "OK", style: .default))
             self?.present(alert, animated: true)
         }
+        
+        viewModel.onCartUpdated = { [weak self] in
+            guard let self else { return }
+            
+            self.tableView.reloadData()
+            self.totalLabel.text = "Total: \(self.calculateTotal()) TRY"
+            self.emptyStateLabel.isHidden = !self.viewModel.items.isEmpty
+            
+            self.updateTabBarBadge()
+        }
     }
 }
 
@@ -151,6 +161,20 @@ private extension CartViewController {
     func calculateTotal() -> Int {
         viewModel.items.reduce(0) { result, item in
             result + (item.quantity * 1000)
+        }
+    }
+    private func updateTabBarBadge() {
+        guard let tabBarController = tabBarController else { return }
+        
+        let count = viewModel.totalItemCount
+        
+        let cartTabIndex = 1 // Todo: change tabbar index when expand tabbar
+        
+        if let items = tabBarController.tabBar.items,
+           items.indices.contains(cartTabIndex) {
+            
+            items[cartTabIndex].badgeValue =
+                count > 0 ? "\(count)" : nil
         }
     }
 }
