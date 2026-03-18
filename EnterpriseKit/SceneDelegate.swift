@@ -20,10 +20,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         window = UIWindow(windowScene: windowScene)
         
-        let productListVC = ProductListViewController()
-        let nav = UINavigationController(rootViewController: productListVC)
-        
-        window?.rootViewController = nav
+        let tabBar = MainTabBarController()
+        window?.rootViewController = tabBar
         window?.makeKeyAndVisible()
 }
 
