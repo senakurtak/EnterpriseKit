@@ -47,16 +47,16 @@ final class CartViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-           super.viewWillAppear(animated)
-           viewModel.loadCart()
-       }
+        super.viewWillAppear(animated)
+        viewModel.loadCart()
+    }
 }
 
 private extension CartViewController {
     
     func setupTableView() {
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        tableView.register(CustomCartCell.self, forCellReuseIdentifier: CustomCartCell.identifier)
         tableView.dataSource = self
         tableView.delegate = self
         
@@ -164,14 +164,24 @@ extension CartViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView,
                    cellForRowAt indexPath: IndexPath)
-        -> UITableViewCell {
-        
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell",
-                                                 for: indexPath)
+    -> UITableViewCell {
         
         let item = viewModel.items[indexPath.row]
-        cell.textLabel?.text = "Product ID: \(item.productId)"
-        cell.detailTextLabel?.text = "Quantity: \(item.quantity)"
+        
+        let cell = tableView.dequeueReusableCell(
+            withIdentifier: CustomCartCell.identifier,
+            for: indexPath
+        ) as! CustomCartCell
+        
+        cell.configure(with: item)
+        
+        cell.onIncreaseTapped = { [weak self] in
+            self?.viewModel.increaseQuantity(for: item)
+        }
+        
+        cell.onDecreaseTapped = { [weak self] in
+            self?.viewModel.decreaseQuantity(for: item)
+        }
         
         return cell
     }

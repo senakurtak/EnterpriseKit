@@ -96,6 +96,28 @@ final class CartViewModel {
             }
         }
     }
+    
+    func increaseQuantity(for item: CartItem) {
+        Task {
+            try? await service.updateQuantity(
+                cartId: item.id,
+                quantity: item.quantity + 1
+            )
+            await fetchCart()
+        }
+    }
+
+    func decreaseQuantity(for item: CartItem) {
+        guard item.quantity > 1 else { return }
+        
+        Task {
+            try? await service.updateQuantity(
+                cartId: item.id,
+                quantity: item.quantity - 1
+            )
+            await fetchCart()
+        }
+    }
 }
 
 // MARK: - Private
@@ -120,3 +142,5 @@ private extension CartViewModel {
         }
     }
 }
+
+
