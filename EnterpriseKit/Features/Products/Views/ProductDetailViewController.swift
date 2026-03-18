@@ -154,6 +154,7 @@ private extension ProductDetailViewController {
         }
         
         viewModel.onAddToCartSuccess = { [weak self] in
+            NotificationCenter.default.post(name: .cartUpdated, object: nil)
             DispatchQueue.main.async {
                 let alert = UIAlertController(title: "Success",
                                               message: "Added to cart",

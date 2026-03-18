@@ -307,9 +307,17 @@
 			path = Cells;
 			sourceTree = "<group>";
 		};
+		B380C2592F6B3C9E00502825 /* Store */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Store;
+			sourceTree = "<group>";
+		};
 		B38B2BC12F5A332C00E61212 /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				B380C2592F6B3C9E00502825 /* Store */,
 				B380C2302F5A34FC00502825 /* DI */,
 				B380C22F2F5A34F400502825 /* Extensions */,
 				B38B2BC32F5A334D00E61212 /* Network */,
